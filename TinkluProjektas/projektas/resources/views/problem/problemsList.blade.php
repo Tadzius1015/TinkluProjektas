@@ -33,8 +33,8 @@
                             <td>{{$row->devicename}}</td>
                             <td>{{$row->description}}</td>
                             <td>{{$row->registrationtime}}</td>
-                            <td>{{$row->name}}</td>
-                            <td>{{$row->surname}}</td>
+                            <td>{{$row->operator->name}}</td>
+                            <td>{{$row->operator->surname}}</td>
                             <td>
                                 <form method="POST" action="{{ url("/take/{$row->id}")}}">
                                     {{ csrf_field() }}

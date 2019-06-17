@@ -23,9 +23,9 @@ class CreatedDevicesreportTable extends Migration
             $table->string('operatorsurname');
             $table->string('technicname');
             $table->string('technicsurname');
-            $table->string('technicdescription');
-            $table->string('reportdescription');
-            $table->integer('notworkingtime');
+            $table->string('technicdescription')->nullable();
+            $table->string('reportdescription')->nullable();
+            $table->integer('notworkingtime')->nullable();
             $table->timestamps();
         });
     }
