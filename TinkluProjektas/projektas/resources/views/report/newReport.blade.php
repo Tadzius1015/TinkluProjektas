@@ -61,7 +61,7 @@
                             <label for="surname" class="col-md-4 control-label">Operatoriaus vardas</label>
 
                             <div class="col-md-6">
-                                <input id="opname" type="text" class="form-control" name="opname" value="{{ $problem[0]->name }}" readonly>
+                                <input id="opname" type="text" class="form-control" name="opname" value="{{ $problem[0]->operator->name }}" readonly>
 
                             </div>
                         </div>
@@ -69,7 +69,7 @@
                             <label for="surname" class="col-md-4 control-label">Operatoriaus pavardė</label>
 
                             <div class="col-md-6">
-                                <input id="opsurname" type="text" class="form-control" name="opsurname" value="{{ $problem[0]->surname }}" readonly>
+                                <input id="opsurname" type="text" class="form-control" name="opsurname" value="{{ $problem[0]->operator->surname }}" readonly>
 
                             </div>
                         </div>

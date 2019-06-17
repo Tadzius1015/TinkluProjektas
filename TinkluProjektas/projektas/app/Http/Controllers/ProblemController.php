@@ -18,21 +18,31 @@ use Validator;
 class ProblemController extends Controller
 {
 
+    protected $repository;
+
+    public function __construct(ProblemRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index()
     {
-        $problems = DB::table('problems')->join('users', 'problems.operatorid', '=', 'users.id')->where('problems.status', '=', 'Užregistruota')->select('problems.*','users.name', 'users.surname')->get();
+        $problems = $this->repository->getAllProblems();
         return view('problem.problemsList', compact('problems'));
     }
+
     public function getTechnicDevices()
     {
-        $id = \Illuminate\Support\Facades\Auth::user()->id;
-        $currentproblems = DB::table('problems')->where('technicid', '=', $id)->where('status', '=', 'Remontuojamas')->get();
+        $currentproblems = $this->repository->getTechnicDevices();
+
         return view('problem.technicProblemsList', compact('currentproblems'));
     }
+
     public function getForm()
     {
         return view('problem.newProblem');
     }
+
     public function createProblem(Request $request)
     {
         $this->validate($request,[
@@ -40,87 +50,63 @@ class ProblemController extends Controller
             'description'=>'required|min:6'
         ]);
 
-        $id = \Illuminate\Support\Facades\Auth::user()->id;
-        $ip = $request->getClientIp();
-        $datetime = date('Y-m-d H:i:s');
-        Problem::create([
-            'devicename' => $request['devicename'],
-            'description' => $request['description'],
-            'ip' => $ip,
-            'registrationtime' => $datetime,
-            'status' => 'Užregistruota',
-            'operatorid' => $id,
-        ]);
-        $request->session()->flash('message.level', 'success');
-        $request->session()->flash('message.content', 'Sėkmingai pridėjote problemą.');
-        return view('problem.newProblem');
+        $status = $this->repository->createProblem($request);
+        if ($status == true)
+        {
+            $request->session()->flash('message.level', 'success');
+            $request->session()->flash('message.content', 'Sėkmingai pridėjote problemą.');
+
+            return view('problem.newProblem');
+        }
     }
 
     public function takeDevice($id, Request $request)
     {
-        $techid = \Illuminate\Support\Facades\Auth::user()->id;
-        $datetime = date('Y-m-d H:i:s');
-        if($problem = Problem::find($id))
-        {
-            $problem->status = 'Remontuojamas';
-            $problem->takingtime = $datetime;
-            $problem->technicid = $techid;
-
-            $problem->save();
+        $status = $this->repository->takeDevice($id, $request);
+        if ($status == true) {
             $request->session()->flash('message.level', 'success');
             $request->session()->flash('message.content', 'Sėkmingai paėmėte problemą sprendimui');
             return redirect('/problemslist');
         }
-        else
-        {
+        else {
             $request->session()->flash('message.level', 'danger');
             $request->session()->flash('message.content', 'Problemos nepavyko paimti');
             return redirect('/problemslist');
         }
-
     }
 
     public function getProblemByID($id)
     {
-        $problem = Problem::find($id);
+        $problem = $this->repository->getProblemByID($id);
         return view('problem.problemEdit', compact('problem'));
     }
 
     public function updateProblem($id, Request $request)
     {
-        if($problem = Problem::find($id))
-        {
-            $problem->technicdescription = $request['technicdescription'];
-            $datetime = date('Y-m-d H:i:s');
-            if($request['status'] == 'Suremontuota')
-            {
-                $problem->status = $request['status'];
-                $problem->fixingtime = $datetime;
-            }
-            $problem->save();
+        $status = $this->repository->updateProblem($id, $request);
+        if ($status == true) {
             $request->session()->flash('message.level', 'success');
             $request->session()->flash('message.content', 'Problemos aprašymas buvo sėkmingai atnaujintas');
             return redirect('/myproblems');
         }
-        else
-        {
+        else {
             $request->session()->flash('message.level', 'danger');
             $request->session()->flash('message.content', 'Tokios problemos neradome duomenų bazėje');
             return redirect('/myproblems');
         }
-
     }
 
     public function getSolvedProblems()
     {
-        $id = \Illuminate\Support\Facades\Auth::user()->id;
-        $solvedproblems = DB::table('problems')->where('technicid','=', $id)->where('status','=', 'Suremontuota')->get();
+        $solvedproblems = $this->repository->getSolvedProblems();
+
         return view('problem.solvedProblemsList', compact('solvedproblems'));
     }
 
     public function getProblemForReport($id)
     {
-        $problem = DB::table('problems')->join('users', 'problems.operatorid', '=', 'users.id')->where('problems.id', '=', $id)->select('problems.*','users.name', 'users.surname')->get();
+        $problem = $this->repository->getProblemForReport($id);
+
         return view('report.newReport', compact('problem'));
     }
 }

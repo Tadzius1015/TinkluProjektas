@@ -16,35 +16,41 @@ Route::get('/', function () {
 });
 Route::auth();
 
-Route::get('/home', 'HomeController@index');
+Route::group([
 
-Route::get('/userslist', 'UsersListController@index')->name('user.list');
+    'middleware' => 'auth',
+], function () {
 
-Route::get('/edit/{id}', ['as' => 'edit', 'uses' => 'UsersListController@getByID']);
-Route::post('/edit/{id}', ['as' => 'edit', 'uses' => 'UsersListController@updateUserByID']);
+    Route::get('/home', 'HomeController@index');
 
-Route::get('/newproblem', 'ProblemController@getForm');
-Route::post('/newproblem', 'ProblemController@createProblem');
+    Route::get('/userslist', 'UsersListController@index')->name('user.list');
 
-Route::get('/problemslist', 'ProblemController@index');
-Route::get('/myproblems', 'ProblemController@getTechnicDevices');
+    Route::get('/edit/{id}', ['as' => 'edit', 'uses' => 'UsersListController@getByID']);
+    Route::post('/edit/{id}', ['as' => 'edit', 'uses' => 'UsersListController@updateUserByID']);
 
-Route::post('/take/{id}', ['as' => 'take', 'uses' => 'ProblemController@takeDevice']);
+    Route::get('/newproblem', 'ProblemController@getForm');
+    Route::post('/newproblem', 'ProblemController@createProblem');
 
-Route::get('/editproblem/{id}', ['as' => 'editproblem', 'uses' => 'ProblemController@getProblemByID']);
-Route::post('/editproblem/{id}', ['as' => 'editproblem', 'uses' => 'ProblemController@updateProblem']);
+    Route::get('/problemslist', 'ProblemController@index');
+    Route::get('/myproblems', 'ProblemController@getTechnicDevices');
 
-Route::get('/solvedproblems', 'ProblemController@getSolvedProblems');
+    Route::post('/take/{id}', ['as' => 'take', 'uses' => 'ProblemController@takeDevice']);
 
-Route::get('/newreport/{id}', ['as' => 'newreport', 'uses' => 'ProblemController@getProblemForReport']);
-Route::post('/newreport', 'ReportController@addReport');
+    Route::get('/editproblem/{id}', ['as' => 'editproblem', 'uses' => 'ProblemController@getProblemByID']);
+    Route::post('/editproblem/{id}', ['as' => 'editproblem', 'uses' => 'ProblemController@updateProblem']);
 
-Route::get('/prepareworkingreport', 'ReportController@getWorkerReportForm');
-Route::post('/prepareworkingreport', 'ReportController@addWorkerReport');
+    Route::get('/solvedproblems', 'ProblemController@getSolvedProblems');
 
-Route::get('/getreport', 'ReportController@getReportFormAdmin');
-Route::post('/getreport', 'ReportController@getReportsFromDB');
+    Route::get('/newreport/{id}', ['as' => 'newreport', 'uses' => 'ProblemController@getProblemForReport']);
+    Route::post('/newreport', 'ReportController@addReport');
 
-Route::get('/concretedevicereport/{id}', ['as' => 'concretedevicereport', 'uses' => 'ReportController@getDeviceReportByID']);
+    Route::get('/prepareworkingreport', 'ReportController@getWorkerReportForm');
+    Route::post('/prepareworkingreport', 'ReportController@addWorkerReport');
 
-Route::get('/userprofile/{id}', ['as' => 'userprofile', 'uses' => 'ReportController@getDeviceReportByID']);
+    Route::get('/getreport', 'ReportController@getReportFormAdmin');
+    Route::post('/getreport', 'ReportController@getReportsFromDB');
+
+    Route::get('/concretedevicereport/{id}', ['as' => 'concretedevicereport', 'uses' => 'ReportController@getDeviceReportByID']);
+
+    Route::get('/userprofile/{id}', ['as' => 'userprofile', 'uses' => 'ReportController@getDeviceReportByID']);
+});

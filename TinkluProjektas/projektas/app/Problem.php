@@ -29,4 +29,14 @@ class Problem extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function technic()
+    {
+        return $this->hasOne('App\User', 'id', 'technicid');
+    }
+
+    public function operator()
+    {
+        return $this->hasOne('App\User', 'id', 'operatorid');
+    }
 }

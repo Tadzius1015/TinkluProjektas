@@ -3,7 +3,7 @@
 @section('content')
     @if(\Illuminate\Support\Facades\Auth::user()->role == 'Vadovas')
         @if(count($reportWorkers) == 0)
-            <h1 align="center">Atsiprašome, tačiau problemų kolkas nėra</h1>
+            <h1 align="center">Atsiprašome, tačiau ataskaitų kolkas nėra</h1>
         @endif
 <div class="container">
     <div class="row">

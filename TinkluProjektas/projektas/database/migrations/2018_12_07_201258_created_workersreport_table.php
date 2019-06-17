@@ -12,7 +12,7 @@ class CreatedWorkersreportTable extends Migration
      */
     public function up()
     {
-        Schema::create('workersreport', function (Blueprint $table) {
+        Schema::create('report_workers', function (Blueprint $table) {
             $table->increments('id');
             $table->string('workername');
             $table->string('workersurname');

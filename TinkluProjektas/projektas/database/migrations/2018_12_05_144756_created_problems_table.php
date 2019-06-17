@@ -21,9 +21,10 @@ class CreatedProblemsTable extends Migration
             $table->dateTime('registrationtime');
             $table->dateTime('takingtime');
             $table->dateTime('fixingtime');
-            $table->integer('operatorid')->unsigned();
+            $table->string('technicdescription')->nullable();
+            $table->integer('operatorid')->unsigned()->nullable();
             $table->foreign('operatorid')->references('id')->on('users');
-            $table->integer('technicid')->unsigned();
+            $table->integer('technicid')->unsigned()->nullable();
             $table->foreign('technicid')->references('id')->on('users');
             $table->timestamps();
         });

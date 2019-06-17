@@ -11,9 +11,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Http\Controllers\Controller;
+use phpDocumentor\Reflection\Types\Integer;
 
 class UsersListController extends Controller
 {
+    protected $repository;
+
+    public function __construct(UsersListRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     protected function validator(array $data)
     {
         return Validator::make($data, [
@@ -24,15 +32,18 @@ class UsersListController extends Controller
 
     public function index()
     {
-        $users = User::all()->toArray();
+        $users = $this->repository->getAllUsers();
+
         return view('user.usersList', compact('users'));
     }
 
     public function getByID($id)
     {
-        $user = User::find($id);
+        $user = $this->repository->getByID($id);
+
         return view('user.userEdit', compact('user'));
     }
+
     public function updateUserByID($id, Request $request)
     {
         $this->validate($request,[
@@ -41,25 +52,18 @@ class UsersListController extends Controller
             'email'=>'required|email'
         ]);
 
-        if($user = User::find($id))
-        {
-            $user->name = $request['name'];
-            $user->surname = $request['surname'];
-            $user->role = $request['role'];
-            $user->email = $request['email'];
+        $status = $this->repository->updateUserByID($id, $request);
 
-            $user->save();
+        if ($status == true) {
             $request->session()->flash('message.level', 'success');
             $request->session()->flash('message.content', 'Vartotojas buvo sėkmingai redaguotas');
+
             return redirect('/userslist');
         }
-        else
-        {
+        else {
             $request->session()->flash('message.level', 'danger');
             $request->session()->flash('message.content', 'Vartotojas nebuvo redaguotas');
         }
-
-
     }
 
 }
